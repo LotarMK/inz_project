@@ -9,15 +9,14 @@ from sklearn.pipeline import Pipeline
 import numpy as np
 
 # 1. Wczytanie danych
-# Załaduj dane z pliku CSV (przykład)
 df = pd.read_csv('data.csv')
 
-# Załóżmy, że ostatnia kolumna to etykieta decyzyjna
+# Ostatnia kolumna to decyzja
 X = df.iloc[:, :-1]  # cechy (atrybuty)
-y = df.iloc[:, -1]   # etykiety (klasy decyzyjne)
+y = df.iloc[:, -1]   # decyzja
 
 # 2. Obsługa brakujących danych
-# Użyj SimpleImputer do wypełnienia brakujących wartości
+# Użycie SimpleImputer do wypełnienia brakujących wartości
 numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
 categorical_features = X.select_dtypes(include=['object']).columns
 
@@ -68,13 +67,13 @@ feature_ranking = pd.DataFrame({
     'Importance': importances
 })
 
-# Posortuj cechy według ważności malejąco
+# Sortowanie cechy według ważności malejąco
 feature_ranking = feature_ranking.sort_values(by='Importance', ascending=False)
 
 print("Ranking atrybutów:")
 print(feature_ranking)
 
-# Opcjonalnie: wybór najważniejszych cech
+# Wybór najważniejszych cech
 selector = SelectFromModel(clf.named_steps['classifier'], prefit=True)
 X_important_train = selector.transform(X_train_processed)
 X_important_test = selector.transform(clf.named_steps['preprocessor'].transform(X_test))
@@ -84,7 +83,7 @@ important_features = [feature_names[i] for i in np.where(selector.get_support())
 print("\nNajważniejsze cechy:")
 print(important_features)
 
-# Można teraz trenować model na wybranych cechach
+# Trenowanie modelu na wybranych cechach
 clf_important = DecisionTreeClassifier(random_state=42)
 clf_important.fit(X_important_train, y_train)
 
